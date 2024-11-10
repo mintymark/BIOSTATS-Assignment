@@ -1,0 +1,410 @@
+AssignmentDATA <- read.csv("Assignment_1_dataset.csv")
+
+#### Normal Testing measures ####
+AssignmentRUCA <- data.frame(AssignmentDATA[AssignmentDATA$Treatment_Arm == "Rucaparib", ]) #Filter AssignmentDATA to create a subset for the "Rucaparib" treatment arm
+AssignmentNIRA <- data.frame(AssignmentDATA[AssignmentDATA$Treatment_Arm == "niraparib", ])
+
+par(mfrow = c(2,2)) #Set up the plotting area to display 4 plots in a 2x2 grid
+  
+hist(AssignmentRUCA$PD.1_pre, main = "Histogram of PD.1_pre Protein Levels (RUCA)") #Plot histogram of PD.1_pre protein levels for the Rucaparib treatment group
+qqnorm(AssignmentRUCA$PD.1_pre, main = "qqplot of PD.1_pre Protein Levels (RUCA)") ; qqline(AssignmentRUCA$PD.1_pre) #Create a Q-Q plot to visually assess the normality of PD.1_pre protein levels in the Rucaparib group
+shapiro_test(AssignmentRUCA$PD.1_pre) #Perform Shapiro-Wilk test to check for normality of PD.1_pre protein levels in the Rucaparib group
+
+hist(AssignmentRUCA$PD.L1_pre, main = "Histogram of PD.L1_pre Protein Levels (RUCA)")
+qqnorm(AssignmentRUCA$PD.L1_pre, main = "qqplot of PD.L1_pre Protein Levels (RUCA)") ; qqline(AssignmentRUCA$PD.L1_pre)
+shapiro_test(AssignmentRUCA$PD.L1_pre)
+
+hist(AssignmentRUCA$CTLA.4_pre, main = "Histogram of CTLA.4_pre Protein Levels (RUCA)")
+qqnorm(AssignmentRUCA$CTLA.4_pre, main = "qqplot of CTLA.4_pre Protein Levels (RUCA)") ; qqline(AssignmentRUCA$CTLA.4_pre)
+shapiro_test(AssignmentRUCA$CTLA.4_pre)
+
+hist(AssignmentRUCA$SIRP_pre, main = "Histogram of SIRP_pre Protein Levels (RUCA)")
+qqnorm(AssignmentRUCA$SIRP_pre, main = "qqplot of SIRP_pre Protein Levels (RUCA)") ; qqline(AssignmentRUCA$SIRP_pre)
+shapiro_test(AssignmentRUCA$SIRP_pre)
+
+hist(AssignmentNIRA$PD.1_pre, main = "Histogram of PD.1_pre Protein Levels (NIRA)")
+qqnorm(AssignmentNIRA$PD.1_pre, main = "qqplot of PD.1_pre Protein Levels (NIRA)") ; qqline(AssignmentNIRA$PD.1_pre)
+shapiro_test(AssignmentNIRA$PD.1_pre)
+
+hist(AssignmentNIRA$PD.L1_pre, main = "Histogram of PD.L1_pre Protein Levels (NIRA)")
+qqnorm(AssignmentNIRA$PD.L1_pre, main = "qqplot of PD.L1_pre Protein Levels (NIRA)") ; qqline(AssignmentNIRA$PD.L1_pre)
+shapiro_test(AssignmentNIRA$PD.L1_pre)
+
+hist(AssignmentNIRA$CTLA.4_pre, main = "Histogram of CTLA.4_pre Protein Levels (NIRA)")
+qqnorm(AssignmentNIRA$CTLA.4_pre, main = "qqplot of CTLA.4_pre Protein Levels (NIRA)") ; qqline(AssignmentNIRA$CTLA.4_pre)
+shapiro_test(AssignmentNIRA$CTLA.4_pre)
+
+hist(AssignmentNIRA$SIRP_pre, main = "Histogram of SIRP_pre Protein Levels (NIRA)")
+qqnorm(AssignmentNIRA$SIRP_pre, main = "qqplot of SIRP_pre Protein Levels (NIRA)") ; qqline(AssignmentNIRA$SIRP_pre)
+shapiro_test(AssignmentNIRA$SIRP_pre)
+
+shapiro_test(AssignmentDATA$PD.1_pre) #Perform Shapiro-Wilk test on all groups to assess normality
+shapiro_test(AssignmentDATA$PD.L1_pre)
+shapiro_test(AssignmentDATA$CTLA.4_pre)
+shapiro_test(AssignmentDATA$SIRP_pre)
+
+shapiro_test(AssignmentDATA$PD.1_during)
+shapiro_test(AssignmentDATA$PD.L1_during)
+shapiro_test(AssignmentDATA$CTLA.4_during)
+shapiro_test(AssignmentDATA$SIRP_during)
+
+shapiro_test(AssignmentDATA$PD.1_post)
+shapiro_test(AssignmentDATA$PD.L1_post)
+shapiro_test(AssignmentDATA$CTLA.4_post)
+shapiro_test(AssignmentDATA$SIRP_post)
+
+
+
+shapiro_test(AssignmentRUCA$PD.1_during)
+shapiro_test(AssignmentRUCA$PD.L1_during)
+shapiro_test(AssignmentRUCA$CTLA.4_during)
+shapiro_test(AssignmentRUCA$SIRP_during)
+
+shapiro_test(AssignmentRUCA$PD.1_post)
+shapiro_test(AssignmentRUCA$PD.L1_post)
+shapiro_test(AssignmentRUCA$CTLA.4_post)
+shapiro_test(AssignmentRUCA$SIRP_post)
+
+
+shapiro_test(AssignmentNIRA$PD.1_during)
+shapiro_test(AssignmentNIRA$PD.L1_during)
+shapiro_test(AssignmentNIRA$CTLA.4_during)
+shapiro_test(AssignmentNIRA$SIRP_during)
+
+shapiro_test(AssignmentNIRA$PD.1_post)
+shapiro_test(AssignmentNIRA$PD.L1_post)
+shapiro_test(AssignmentNIRA$CTLA.4_post)
+shapiro_test(AssignmentNIRA$SIRP_post)
+
+#### Question 1 Assignment 1 (t.test) ####
+
+#1.	Is there a statistically significant difference in the expression levels of the 4 immune checkpoint proteins 
+#between treatment arms before treatment (analyze each marker separately)? 
+
+
+t.test(PD.1_pre ~ Treatment_Arm, data = AssignmentDATA, var.equal = TRUE) #Perform a two-sample t-test to compare PD.1_pre protein levels between treatment arms
+
+t.test(PD.L1_pre ~ Treatment_Arm, data = AssignmentDATA, var.equal = TRUE)
+
+wilcox.test(CTLA.4_pre ~ Treatment_Arm, data = AssignmentDATA) #Perform a Wilcoxon rank-sum test to compare CTLA.4_pre protein levels between treatment arms
+tapply(AssignmentDATA$PD.L1_pre, AssignmentDATA$Treatment_Arm, mean) #Calculate the mean PD.L1_pre protein levels
+
+wilcox.test(SIRP_pre ~ Treatment_Arm, data = AssignmentDATA)
+tapply(AssignmentDATA$SIRP_pre, AssignmentDATA$Treatment_Arm, mean)
+
+sum(Treatment_Arm == "Rucaparib") + sum(Treatment_Arm == "niraparib") #Testing to see if sample amount is correct
+
+#### Quesiton 2 Assignment 1 (chisq) ####
+
+#2.	We also have information on “responders” and the “nonresponders”. Are estrogen receptor positive sample more likely to be non-responders?
+
+table_DATA <- table(AssignmentDATA$Treatment_Response, AssignmentDATA$ER_status) #Placing values as a table
+chisq_DATA <- chisq.test(table_DATA) #Performing Chi-Squared test
+chisq_DATA$residuals #Obtaining equivalent of a z-score 
+
+table_RUCA <- table(AssignmentRUCA$Treatment_Response, AssignmentRUCA$ER_status) #Placing values as a table
+chisq_RUCA <- chisq.test(table_RUCA) #Performing Chi-Squared test
+chisq_RUCA$residuals
+
+table_NIRA <- table(AssignmentNIRA$Treatment_Response, AssignmentNIRA$ER_status) #Placing values as a table
+chisq_NIRA <- chisq.test(table_NIRA) #Performing Chi-Squared test
+chisq_NIRA$residuals
+
+pairwise_results_DATA <- pairwise.prop.test(table_DATA)
+pairwise_results_DATA
+
+pairwise_results_RUCA <- pairwise.prop.test(table_RUCA)
+pairwise_results_RUCA
+
+pairwise_results_NIRA <- pairwise.prop.test(table_NIRA)
+pairwise_results_NIRA
+
+
+#### Question 3 Assignment 1 (anova) ####
+
+#3.	Is there a statistically significant difference between the expression levels of the 4 immune checkpoint proteins 
+#in the Rucapari treatment arm (pre-treatment), and where does that difference lie? 
+
+long_DATA <- AssignmentDATA %>%
+  pivot_longer(
+    cols = c("PD.1_pre", "PD.L1_pre", "CTLA.4_pre", "SIRP_pre"),
+    names_to = "Protein", 
+    values_to = "Expression"
+  ) #Transforming data into correct format to perform kruskal test
+
+
+long_RUCA <- AssignmentRUCA %>%
+  pivot_longer(
+    cols = c("PD.1_pre", "PD.L1_pre", "CTLA.4_pre", "SIRP_pre"),
+    names_to = "Protein", 
+    values_to = "Expression"
+  ) #Transforming data into correct format to perform kruskal test
+
+shapiro_test(long_RUCA$Expression) #Performing shapiro test on data to ensure appropriate test
+
+kruskal_result_RUCA <- kruskal.test(Expression ~ Protein, data = long_RUCA) #Performing Kruskal test to compare expression levels across different proteins.
+kruskal_result_RUCA
+
+dunnTest(long_RUCA$Expression ~ long_RUCA$Protein, method = "bh") #Performs Dunn's test for pairwise comparisons between protein groups, adjusting p-values using the Benjamini-Hochberg method to control false discovery rate.
+
+
+#### Question 1 Assignment 2 (paired wilcox) ####
+# Is there a statistically significant difference in the expression 
+# levels of the 4 immune checkpoint proteins pre-treatment and post-treatment (analyze each marker separately)? 
+
+shapiro_test(AssignmentRUCA$PD.1_post)
+shapiro_test(AssignmentRUCA$PD.L1_post)
+shapiro_test(AssignmentRUCA$CTLA.4_post)
+shapiro_test(AssignmentRUCA$SIRP_post)
+
+shapiro_test(AssignmentNIRA$PD.1_post)
+shapiro_test(AssignmentNIRA$PD.L1_post)
+shapiro_test(AssignmentNIRA$CTLA.4_post)
+shapiro_test(AssignmentNIRA$SIRP_post)
+
+wilcox.test(AssignmentDATA$PD.1_pre, AssignmentDATA$PD.1_post, paired = TRUE) #Performs a paired Wilcoxon signed-rank test to compare the pre and post-treatment expression levels of protein within the same subjects.
+wilcox.test(AssignmentDATA$PD.L1_pre, AssignmentDATA$PD.L1_post, paired = TRUE)
+wilcox.test(AssignmentDATA$CTLA.4_pre, AssignmentDATA$CTLA.4_post, paired = TRUE)
+wilcox.test(AssignmentDATA$SIRP_pre, AssignmentDATA$SIRP_post, paired = TRUE)
+
+#### Question 2 Assignment 2 (mcnemar) ####
+
+#	This particular treatment regimen is quite severe (the backbone is paclitaxel and cisplatin). 
+# Loss of appetite, gastrointestinal upset and weight loss are common side effects. 
+# The treating clinician will intervene to mitigate this. However, in some cases a severe nutritional 
+# deficit will occur. Is there a significant increase in the number of patient underweight post treatment 
+# (classed as a BMI of < 20)? 
+
+WeightedDATA <- data.frame(
+  Patient_number = AssignmentDATA$Patient_number,
+  PreUnder = ifelse(AssignmentDATA$BMI_pre_treatment < 20, 0, 1),
+  PreOver = ifelse(AssignmentDATA$BMI_pre_treatment > 20, 1, 0),
+  PostUnder = ifelse(AssignmentDATA$BMI_post_treatment < 20, 0, 1),
+  PostOver = ifelse(AssignmentDATA$BMI_post_treatment > 20, 1, 0),
+  stringsAsFactors = FALSE
+) #Creates a new data frame categorizing patients as "under" or "over" weight based on their pre- and post-treatment BMI, where 0 = underweight (<20) and 1 = overweight (>20).
+
+WeightedtableDATA <- table(WeightedDATA$PreOver, WeightedDATA$PostOver) #Creates a contingency table to show the frequency of patients categorized as overweight (PreOver vs. PostOver) before and after treatment.
+WeightedtableDATA
+
+wilcox.test(AssignmentDATA$BMI_post_treatment, AssignmentDATA$BMI_pre_treatment, paired = TRUE) #Performs a paired Wilcoxon signed-rank test to compare BMI values before and after treatment within the same individuals.
+
+mcnemar.test(WeightedtableDATA) #Performs McNemar's test on the contingency table to assess if there is a significant change in the classification of patients as "overweight" or "underweight" pre- and post-treatment.
+
+#### Question 3 Assignment 2 (twowayanova) ####
+
+#3.	Is there a statistically significant difference between the expression levels of the 
+# 4 immune checkpoint proteins over the course of the trial (3 time points, pre, during and post), 
+# and where does that difference lie?
+
+meltedDATA <- melt(AssignmentDATA, 
+                   id.vars = ) #Melts the data from wide format to long format.
+
+meltedDATA <- AssignmentDATA %>%
+  pivot_longer(cols = PD.1_pre:SIRP_post, names_to = "Protein", values_to = "Expression") #Reshapes the data from wide to long format, transforming columns from 'PD.1_pre' to 'SIRP_post' into two variables: 'Protein' and 'Expression'.
+
+meltedDATA <- meltedDATA %>%
+  mutate(TimePoint = case_when(
+    grepl("PD.1_pre|PD.L1_pre|CTLA.4_pre|SIRP_pre", Protein, ignore.case = TRUE) ~ 1,
+    grepl("PD.1_during|PD.L1_during|CTLA.4_during|SIRP_during", Protein, ignore.case = TRUE) ~ 2,
+    grepl("PD.1_post|PD.L1_post|CTLA.4_post|SIRP_post", Protein, ignore.case = TRUE) ~ 3,
+    TRUE ~ NA_real_  # for any unmatched cases
+  )) #Adds a new 'TimePoint' column to the melted data, categorizing each protein based on whether it corresponds to pre, during, or post-treatment stages (1 = pre, 2 = during, 3 = post).
+
+friedman.test(y = meltedDATA$Expression,
+              groups = meltedDATA$Protein,
+              blocks = meltedDATA$Patient_number) #Performs a Friedman, considering the paired nature of the data (patients as blocks).
+
+frdAllmeltedDATA <- frdAllPairsConoverTest(y = meltedDATA$Expression,
+              groups = meltedDATA$Protein,
+              blocks = meltedDATA$Patient_number) #Conducts post-hoc pairwise comparisons using the Conover test to determine which specific protein pairs have significant differences in expression after finding a significant result from the Friedman test.
+frdAllmeltedDATA
+
+
+
+significantfrdAllmeltedDATA <- frdAllPairsConoverTest(y = meltedDATA$Expression,
+                                           groups = meltedDATA$Protein,
+                                           blocks = meltedDATA$Patient_number) %>%
+  {.$p.value} %>%                 #Extracts the p-values from the test results.     
+  {.[. > 0.05] <- NA; .} #Replaces p-values greater than 0.05 (non-significant results) with NA.
+significantfrdAllmeltedDATA
+
+
+
+
+
+
+#### Question 1 Assignment 3 (power test) ####
+
+#1.	The expression levels of the four immune checkpoint proteins are measured for each treatment arm. 
+#For those markers which are not significant (pre treatment), calculate the number of samples required 
+#to have 80% power to detect a statistically significant difference (remember we have performed 4 tests here).
+
+
+cohen_d_PD.L1_DATA <- cohen.d(AssignmentDATA$PD.L1_pre[AssignmentDATA$Treatment_Arm == "Rucaparib"], AssignmentDATA$PD.L1_pre[AssignmentDATA$Treatment_Arm == "niraparib"]) #This calculates the Cohen's d effect size for the difference in PD.L1 expression levels pre-treatment between the Rucaparib and Niraparib treatment arms.
+pwr.t.test(d = cohen_d_PD.L1_DATA$estimate, sig.level = 0.05, power = 0.8) #This performs a power analysis (using a t-test) to determine the required sample size to achieve 80% power for detecting the effect size calculated using Cohen's d with a significance level of 0.05.
+
+cohen_d_CTLA_DATA <- cohen.d(AssignmentDATA$CTLA.4_pre[AssignmentDATA$Treatment_Arm == "Rucaparib"], AssignmentDATA$CTLA.4_pre[AssignmentDATA$Treatment_Arm == "niraparib"])
+pwr.t.test(d = cohen_d_CTLA_DATA$estimate, sig.level = 0.05, power = 0.8)
+
+cohen_d_SIRP_DATA <- cohen.d(AssignmentDATA$SIRP_pre[AssignmentDATA$Treatment_Arm == "Rucaparib"], AssignmentDATA$SIRP_pre[AssignmentDATA$Treatment_Arm == "niraparib"])
+pwr.t.test(d = cohen_d_SIRP_DATA$estimate, sig.level = 0.05, power = 0.8)
+
+
+#### Question 2 Assignment 3 (MultiAnalysis) ####
+
+#2.	Each of the 4 immune checkpoint proteins represent different parts of the immune checkpoint system. 
+#Are these markers effected differently by the anti-PARP treatments (the post treatment cohort)? 
+#Look at rucaparib and niraparib separately. Where there is no significant difference calculate the number of 
+#samples required to have 80% power to detect a statistically significant difference.
+
+
+meltedTESTING <- meltedDATA %>%
+  mutate(Protein_name = sub("_.*", "", Protein),  #Extracts the protein name (before the first "_")
+         Timepoint = sub(".*_", "", Protein))  #Extracts the time point (after the last "_")
+
+
+meltedTESTING_filtered <- meltedTESTING %>%
+  filter(Timepoint %in% c("pre", "post")) #Filter the data to keep only rows where the timepoint is either "pre" or "post"
+
+meltedTESTING_wide <- meltedTESTING_filtered %>%
+  pivot_wider(names_from = Timepoint, values_from = Expression, 
+              names_prefix = "Expression_")%>%
+    select(Patient_number, Protein_name, Treatment_Arm, Expression_pre, Expression_post) #Reshapes data from long to wide format, creating separate columns for pre and post-treatment expression values for each protein and treatment arm.
+
+ggplot(meltedTESTING_filtered, aes(x = Timepoint, y = Expression, fill = Timepoint)) +
+  geom_boxplot() +
+  facet_grid(Protein_name ~ Treatment_Arm) +  
+  theme_minimal() +
+  labs(title = "Protein Expression Before and After Treatment (Wilcoxon Test)") #Creates a boxplot to visualize protein expression before and after treatment, with separate plots for each protein and treatment arm, and a minimal theme.
+
+meltedTESTING_wide_REFORMATED <- meltedTESTING_wide %>%
+  group_by(Patient_number, Protein_name) %>%
+  summarise(
+    Treatment_Arm = first(Treatment_Arm),  #Keep the first Treatment_Arm value
+    Expression_pre = max(Expression_pre, na.rm = TRUE),  #Get the valid Expression_pre value
+    Expression_post = max(Expression_post, na.rm = TRUE), #Get the valid Expression_post value
+    .groups = "drop"  #Drop grouping after summarizing
+  )
+
+kruskal.test(Expression ~ Treatment_Arm, data = meltedDATA)
+
+
+meltedTESTING$Time <- ifelse(grepl("pre", meltedDATA$Protein), "pre", "post")
+meltedTESTING <- meltedTESTING %>%
+  filter(!grepl("during", Protein)) #Adds a new column 'Time' to classify each observation as 'pre' or 'post' based on the Protein name, and filters out any data related to the 'during' timepoint.
+
+
+kruskal_results_individial_Treatment_ARMS <- meltedTESTING %>%
+  group_by(Protein, Time) %>%
+  do({
+    test_result <- kruskal.test(Expression ~ Treatment_Arm, data = .)
+    data.frame(Protein = unique(.$Protein), Time = unique(.$Time), p_value = test_result$p.value)
+  })
+kruskal_results_individial_Treatment_ARMS
+
+
+#### Assignment 3 completed ####
+
+
+meltedTESTING <- meltedDATA %>%
+  mutate(Protein_name = sub("_.*", "", Protein),  
+         Timepoint = sub(".*_", "", Protein)) #Creates two new columns, 'Protein_name' by extracting the part before the underscore in the 'Protein' column, and 'Timepoint' by extracting the part after the underscore.
+
+meltedTESTING_filtered <- meltedTESTING %>%
+  filter(Timepoint %in% c("pre", "post")) #Filters the dataset to include only rows where the 'Timepoint' is either 'pre' or 'post', excluding other timepoints like 'during'.
+
+meltedTESTING$Time <- ifelse(grepl("pre", meltedDATA$Protein), "pre", "post") #Creates a new 'Time' column in the meltedTESTING dataframe, assigning "pre" if 'Protein' contains "pre", else "post".
+meltedTESTING <- meltedTESTING %>% 
+  filter(!grepl("during", Protein)) #Filters out rows where the 'Protein' contains "during", leaving only 'pre' and 'post' timepoints.
+
+meltedDATATESTING <- meltedTESTING_wide_REFORMATED %>%
+  mutate(Expression_change = Expression_post / Expression_pre) #Creates a new column 'Expression_change' by calculating the ratio of 'Expression_post' to 'Expression_pre'.
+
+kruskal_results_TESTING <- meltedDATATESTING %>%
+  group_by(Protein_name) %>%
+  do({
+    test_result <- kruskal.test(Expression_change ~ Treatment_Arm, data = .) #Performs Kruskal-Wallis test for each protein to compare the expression change between treatment arms, 
+    data.frame(Protein_name = unique(.$Protein_name), p_value = test_result$p.value) #returning the p-value for each protein and storing the results in a data frame.
+  })
+
+kruskal_results_TESTING
+
+
+meltedDATATESTING %>%
+  select(Patient_number, Treatment_Arm, Protein_name, Expression_change) %>%
+  pivot_wider( #Reshapes the data from long to wide format, selecting relevant columns and creating new columns for each 
+    names_from = Protein_name,
+    values_from = Expression_change,
+    names_prefix = "Expression_change"
+  ) 
+
+wide_df <- meltedDATATESTING %>% 
+  select(-Expression_pre, -Expression_post) %>%
+  pivot_wider(names_from = Protein_name, values_from = Expression_change) #Removes the 'Expression_pre' and 'Expression_post' columns, then reshapes the data from long to wide format, 
+
+cohen_d_PD.1 <- cohen.d(wide_df$PD.1[Treatment_Arm == "niraparib"], wide_df$PD.1[Treatment_Arm == "Rucaparib"]) #Calculates Cohen's d for the difference in expression changes of PD.1 between the 'niraparib' and 'Rucaparib' treatment arms.
+cohen_d_PD.L1 <- cohen.d(wide_df$PD.L1[Treatment_Arm == "niraparib"], wide_df$PD.L1[Treatment_Arm == "Rucaparib"])
+cohen_d_CTLA <- cohen.d(wide_df$CTLA.4[Treatment_Arm == "niraparib"], wide_df$CTLA.4[Treatment_Arm == "Rucaparib"])
+cohen_d_SIRP <- cohen.d(wide_df$SIRP[Treatment_Arm == "niraparib"], wide_df$SIRP[Treatment_Arm == "Rucaparib"])
+
+pwr.t.test(d = cohen_d_PD.1$estimate, sig.level = 0.05, power = 0.8) #Performs a power analysis using Cohen's d value to determine the sample size required for 80% power at a significance level of 0.05.
+pwr.t.test(d = cohen_d_PD.L1$estimate, sig.level = 0.05, power = 0.8)
+pwr.t.test(d = cohen_d_CTLA$estimate, sig.level = 0.05, power = 0.8)
+pwr.t.test(d = cohen_d_SIRP$estimate, sig.level = 0.05, power = 0.8)
+
+
+
+#### Question 3 Assignment 3 ####
+
+#3.	As mentioned in assignment 2, this particular treatment regimen is quite severe (the backbone is paclitaxel and cisplatin). 
+#Loss of appetite, gastrointestinal upset and weight loss are common side effects. The treating clinician will intervene to mitigate this. 
+#However, in some cases a severe nutritional deficit will occur. Is there a significant increase in the number of underweight patients 
+#in the two treatment arms post treatment (classed as a BMI of < 20, “BMI_post_treatment”)? If not, how many samples would be needed to 
+#have an 80% power to detect a significant difference?
+
+Weighted_RUCA <- transform(AssignmentRUCA,
+                           PreUnder = ifelse(BMI_pre_treatment < 20, 0, 1),
+                           PreOver = ifelse(BMI_pre_treatment > 20, 1, 0),
+                           PostUnder = ifelse(BMI_post_treatment < 20, 0, 1),
+                           PostOver = ifelse(BMI_post_treatment > 20, 1, 0),
+                           WeightedMetric = (ifelse(BMI_pre_treatment < 20, 0, 1) + ifelse(BMI_pre_treatment > 20, 1, 0) + 
+                                               ifelse(BMI_post_treatment < 20, 0, 1) + ifelse(BMI_post_treatment > 20, 1, 0)) / 4) #Transform the dataset to create binary columns indicating underweight/overweight status pre- and post-treatment, and a weighted metric that averages these statuses.
+WeightedtableRUCA <- table(Weighted_RUCA$PreOver, Weighted_RUCA$PostOver) #Table that shows the distribution of patients' BMI status (overweight (1) vs. non-overweight (0)) before and after treatment.
+
+Weighted_NIRA <- transform(AssignmentNIRA,
+                           PreUnder = ifelse(BMI_pre_treatment < 20, 0, 1),
+                           PreOver = ifelse(BMI_pre_treatment > 20, 1, 0),
+                           PostUnder = ifelse(BMI_post_treatment < 20, 0, 1),
+                           PostOver = ifelse(BMI_post_treatment > 20, 1, 0),
+                           WeightedMetric = (ifelse(BMI_pre_treatment < 20, 0, 1) + ifelse(BMI_pre_treatment > 20, 1, 0) + 
+                                               ifelse(BMI_post_treatment < 20, 0, 1) + ifelse(BMI_post_treatment > 20, 1, 0)) / 4)
+WeightedtableNIRA <- table(Weighted_NIRA$PreOver, Weighted_NIRA$PostOver)
+
+mcnemar.test(WeightedtableRUCA) #Perform McNemar test on contingency table to assess significant differences in BMI categories before and after treatment in Rucaparib group
+mcnemar.test(WeightedtableNIRA) #Perform McNemar test on contingency table to assess significant differences in BMI categories before and after treatment in Niraparib group
+
+
+#btestingnew_NIRA <- cohen.d(Weighted_NIRA$PD.1_post[Weighted_NIRA$WeightedMetric==1.0], Weighted_NIRA$PD.1_post[Weighted_NIRA$WeightedMetric==0.5])
+#pwr.t.test(d=btestingnew_NIRA$estimate, sig.level = 0.05, power = .8)
+
+
+
+
+
+#### Question 4 Assignment 3 ####
+
+#4.	23% of the Irish adult population is obese versus ~31% of samples in this dataset (classed as a BMI of >30, “BMI_pre_treatment”). 
+#How large would the study need to be to have an 80% power to detect a significant difference between ovarian cancer patients and the 
+#Irish population as a whole?
+
+h <- ES.h(p1 = 0.31, p2 = 0.23) #Calculate effect size (ES.h) based on proportions (p1 = 0.31, p2 = 0.23)
+pwr.2p.test(h = h, sig.level = 0.05, power = 0.8) #Perform power analysis
+
+
+
+
+
+
+
+
