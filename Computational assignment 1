@@ -1,0 +1,122 @@
+library(limma)
+library(edgeR)
+library(clusterProfiler)
+library(NMF)
+library(ggplot2)
+load("gene.Rdata")
+load("norm.Rdata")
+
+design <- model.matrix(~ 0+factor(c(rep(1,3),rep(2,3)))) # Create design matrix
+colnames(design) <- c("APR", "DSMO") # Assign column names to match the experimental groups
+contrast.matrix <- makeContrasts(APR-DSMO, levels=design) # Define contrast to compare APR vs. DMSO (pretending that DMSO is the baseline such that positive log indicates upregulation due to APR)
+v <- voom(y, design) # Transform count data
+fit <- lmFit(v, design) # Fit the linear model
+fit2 <- contrasts.fit(fit, contrast.matrix) # Apply the contrast to the fitted model
+fit3 <- eBayes(fit2) # Perform empirical Bayes moderation to improve variance estimation
+topTable(fit3)
+results_fit3 <- topTable(fit3, number = Inf, adjust.method = "BH") # Extract all results with Benjamini-Hochberg adjustment
+
+top_five <- head(results_fit3[order(results_fit3$logFC, decreasing = TRUE), ], 5) # Select the top 5 upregulated genes
+bottom_five <- tail(results_fit3[order(results_fit3$logFC, decreasing = TRUE), ], 5) # Select the bottom 5 downregulated genes
+
+top_five$Symbol # Viewing symbol names
+bottom_five$Symbol # Viewing symbol names
+ 
+#### PATHWAY ENRICHMENTS - NOTE - I used GSEA instead of this, reason explained in assignment but showing workflow regardless ####
+de <- topTreat(fit3, number=1000,p.value=0.05)[,1] # Select the top 1000 differentially expressed genes
+yy <- enrichKEGG(de,organism = "hsa", pvalueCutoff=0.05)  # Perform KEGG pathway enrichment analysis
+head(yy$subcategory, n =10) # Display the top 10 KEGG pathway $subcategories
+
+#### Taking out for GSEA ####
+GSEAanal <- results_fit3[c("Symbol", "t")] # Extract gene symbols and t-statistics for GSEA ranking
+GSEAanal <- GSEAanal[order(GSEAanal$t, decreasing = T), , drop = FALSE] # Rank genes by t-statistic in descending order as this is how GSEA wants it 
+write.table(GSEAanal, "ranking3.rnk", sep = "\t", col.names = F, row.names = F) # Extracting the file - This is with the un-removed DMSO2 - Just testing. I repeat the exact same below with removed version
+
+
+#### PCA and HEATMAP ####
+
+# Using ggplot to create a nice PCA plot
+mds_data  <- plotMDS(y,labels=Targets[1:6,1],gene.selection="common",prior.count=5) # Perform Multi-Dimensional Scaling (MDS) plot  
+mds_df <- data.frame(MDS1 = mds_data$x, MDS2 = mds_data$y, Sample = Targets[1:6, 1]) # Convert MDS results into a dataframe for ggplot  
+ggplot(mds_df, aes(x = MDS1, y = MDS2, label = Sample)) +
+  geom_point(aes(color = Sample), size = 4) + 
+  geom_text(aes(label = Sample), vjust = -0.3, hjust = 0.3) +
+  theme_minimal() +
+  labs(title = "PCA Plot", x = "MDS1", y = "MDS2") +
+  theme(legend.position = "none") 
+
+# Create metadata for heatmap  
+sample_names <- Targets[1:6, 1]
+condition <- factor(c(rep("WT", 3), rep("KO", 3)))
+col_data <- data.frame(
+  sample = sample_names,
+  condition = condition,
+  row.names = sample_names
+)
+
+norm_counts <- v$E # Extract normalized expression data  
+
+
+# Generate heatmap of gene expression  
+aheatmap(
+  aheatmap(norm_counts, 
+           scale = "row",               # Scale genes (rows)
+           color = c("navy", "white", "firebrick"),  # Color scheme
+           main = "Gene Expression Heatmap") # Title
+)
+  
+# Extract DEGs with adj.P.Val < 0.05
+degs <- topTable(fit3, number = Inf, adjust.method = "BH", p.value = 0.05)
+degs_genes <- rownames(degs)  # Get the gene names/IDs of DEGs
+heatmap_genes <- norm_counts[degs_genes, ]  # Subset for DEGs
+# Sort DEGs by absolute logFC (or any other metric)
+degs_sorted <- degs[order(abs(degs$logFC), decreasing = TRUE), ]
+top20_genes <- rownames(degs_sorted)[1:50]  # Get top 20 genes
+top20_counts <- norm_counts[top20_genes, ]  # Subset for top 20 genes
+
+aheatmap(top20_counts, Rowv = NA, Colv = NA, main = "Heatmap of Top 20 DEGs")
+
+
+#### Hierarchical clustering ####
+cor_matrix <- cor(norm_counts, method = "spearman") # Calculate the correlation matrix (Spearman correlation)
+
+distance_matrix <- as.dist(1 - cor_matrix) # Convert correlation to a distance matrix
+
+hc <- hclust(distance_matrix) # Perform hierarchical clustering
+
+# Plot the dendrogram
+plot(hc, labels = colnames(norm_counts), main = "Hierarchical Clustering of Samples", xlab = "", sub = "")
+cor_matrix <- cor(norm_counts, method = "spearman") # Compute pairwise correlation matrix using Spearman correlation  
+print(cor_matrix)
+pheatmap(cor_matrix, main = "Pairwise Correlation Between Replicates") # Generate a heatmap of the pairwise correlation matrix  
+
+
+
+
+#### Taking out for GSEA - WITH DSMO2 REMOVED fixed - Comments are same as above ####
+y_removed <- y[, colnames(y) != "BT549_DMSO_2_R1.trim.fq.gz.PE.subread.bam"] # Remove DMSO2 from dataset 
+design_removed <- model.matrix(~ 0+factor(c(rep(1,3),rep(2,2)))) # 3 APR and 2 DMSO
+colnames(design_removed) <- c("APR", "DSMO") # Pretending DMSO is wild type (WT) so that we can see if APR has positive effect on cell line
+contrast.matrix_removed <- makeContrasts(APR-DSMO, levels=design_removed) # Pretending DMSO is wild type (WT) so that we can see if APR has positive effect on cell line
+v_removed <- voom(y_removed, design_removed)
+fit_removed <- lmFit(v_removed, design_removed)
+fit2_removed <- contrasts.fit(fit_removed, contrast.matrix_removed)
+fit3_removed <- eBayes(fit2_removed)
+topTable(fit3_removed)
+results_fit3_removed <- topTable(fit3_removed, number = Inf, adjust.method = "BH")
+
+top_five_removed <- head(results_fit3_removed[order(results_fit3_removed$logFC, decreasing = TRUE), ], 5)
+bottom_five_removed <- tail(results_fit3_removed[order(results_fit3_removed$logFC, decreasing = TRUE), ], 5)
+
+top_five_removed$Symbol
+bottom_five_removed$Symbol
+
+#### PATHWAY ENRICHMENTS - WITH DSMO2 removed ####
+de_removed <- topTreat(fit3_removed, number=1000,p.value=0.05)[,1]
+yy_removed <- enrichKEGG(de_removed, organism = "hsa", pvalueCutoff=0.05)
+head(yy_removed$Description, n =10)
+
+#### Taking out for GSEA - WITH DSMO2 REMOVED ####
+GSEAanal <- results_fit3_removed[c("Symbol", "t")]
+GSEAanal <- GSEAanal[order(GSEAanal$t, decreasing = T), , drop = FALSE]
+write.table(GSEAanal, "ranking_removed.rnk", sep = "\t", col.names = F, row.names = F)
